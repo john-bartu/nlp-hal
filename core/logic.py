@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import logging
 import re
 from abc import ABC, abstractmethod, ABCMeta
 from typing import List
 
 import numpy as np
+
+module_logger = logging.getLogger(__name__)
 
 
 class LogicAdapter(ABC):
@@ -18,7 +21,7 @@ class LogicAdapter(ABC):
         return True
 
 
-class RegexAdapter(LogicAdapter, metaclass=ABCMeta):
+class RegexLogicAdapter(LogicAdapter, metaclass=ABCMeta):
     @property
     @abstractmethod
     def pattern(self) -> re.Pattern:
@@ -59,10 +62,10 @@ class Response:
         self.confidence: float = confidence
 
     def __repr__(self):
-        return f"{self.confidence}:{self.response_text}"
+        return f"{self.confidence:.2f}:{self.response_text[:32]}..."
 
 
-class SimpleBot:
+class CoreBot:
 
     def __init__(self) -> None:
         super().__init__()
@@ -75,14 +78,17 @@ class SimpleBot:
         self.logic_adapters.extend(logic_adapters)
 
     def ask(self, input_text: str) -> str:
+        module_logger.debug(f"Asked: {input_text}")
         available_responses = []
         for adapter in self.logic_adapters:
             if adapter.can_process(input_text):
-                available_responses.append(adapter.process(input_text))
+                response = adapter.process(input_text)
+                module_logger.debug(f"New Response: {response}")
+                available_responses.append(response)
 
-        print(f"----\n\tQ:{input_text}\n\tA:{available_responses}")
         if len(available_responses) == 0:
             return ""
 
         match = np.array([res.confidence for res in available_responses]).argsort()[-1]
+        module_logger.info(f"Best match: {available_responses[match].response_text}")
         return available_responses[match].response_text

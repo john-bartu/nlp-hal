@@ -21,6 +21,13 @@ class LogicAdapter(ABC):
         return True
 
 
+class Stream(ABC):
+
+    @abstractmethod
+    def handle(self, output: Response):
+        pass
+
+
 class RegexLogicAdapter(LogicAdapter, metaclass=ABCMeta):
     @property
     @abstractmethod
@@ -70,6 +77,7 @@ class CoreBot:
     def __init__(self) -> None:
         super().__init__()
         self.logic_adapters: list[LogicAdapter] = []
+        self.output_adapters: list[Stream] = []
 
     def add_logic_adapter(self, logic_adapter: LogicAdapter):
         self.logic_adapters.append(logic_adapter)
@@ -77,7 +85,11 @@ class CoreBot:
     def add_logic_adapters(self, logic_adapters: list[LogicAdapter]):
         self.logic_adapters.extend(logic_adapters)
 
-    def ask(self, input_text: str) -> str:
+    def add_output_adapters(self, stream_adapters: list[Stream]):
+        self.output_adapters.extend(stream_adapters)
+
+    def ask(self, input_text: str):
+        module_logger.info('\t\tBEGIN OF UTTERANCE')
         module_logger.debug(f"Asked: {input_text}")
         available_responses = []
         for adapter in self.logic_adapters:
@@ -91,4 +103,7 @@ class CoreBot:
 
         match = np.array([res.confidence for res in available_responses]).argsort()[-1]
         module_logger.info(f"Best match: {available_responses[match].response_text}")
-        return available_responses[match].response_text
+
+        for adapter in self.output_adapters:
+            adapter.handle(available_responses[match])
+        module_logger.info('\t\tEND OF UTTERANCE\n')

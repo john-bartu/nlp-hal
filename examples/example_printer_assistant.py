@@ -1,13 +1,13 @@
 from __future__ import annotations
 
+import logging
 import re
 
-import coloredlogs
-
+from audio_porcessing.text_to_speech import CoquiTTSStreamAdapter
 from core.adapters import CorpusLogicAdapter, LowConfidenceAdapter
 from core.logic import Response, CoreBot, RegexLogicAdapter
 
-coloredlogs.install(level="DEBUG")
+logging.basicConfig(level=logging.DEBUG)
 
 test_dialog = [
     [
@@ -65,6 +65,11 @@ if __name__ == '__main__':
             CorpusLogicAdapter(test_dialog),
             LowConfidenceAdapter(0.2, ["Sorry i dont understand.", "Could you repeat please?"]),
             ErrorCodeLogicAdapter()
+        ]
+    )
+    bot.add_output_adapters(
+        [
+            CoquiTTSStreamAdapter(),
         ]
     )
     bot.ask("i have black lines on page")

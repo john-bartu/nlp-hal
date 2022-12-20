@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-import coloredlogs
+import logging
 
+from audio_porcessing.text_to_speech import CoquiTTSStreamAdapter
 from core.adapters import CorpusLogicAdapter, LowConfidenceAdapter, BinaryConvertRegexLogicAdapter
-from core.logic import CoreBot
+from core.logic import CoreBot, Stream, Response
 
-coloredlogs.install(level="DEBUG")
+logging.basicConfig(level=logging.INFO)
 
 test_dialog = [
     [
@@ -17,15 +18,38 @@ test_dialog = [
     ["How are you", "System is up, running with no bugs."]
 ]
 
+
+class ConsoleStreamAdapter(Stream):
+
+    def handle(self, output: Response):
+        logging.info(f'print({output.response_text})')
+
+
+class ExampleApiStreamAdapter(Stream):
+
+    def handle(self, output: Response):
+        body = {
+            'text': output.response_text,
+            'confidence': output.confidence
+        }
+        logging.info("curl -X POST -H 'Content-Type: application/json' -d " + str(body) + " https://example.com")
+
+
 if __name__ == '__main__':
     bot = CoreBot()
-    bot.add_logic_adapters(
-        [
-            CorpusLogicAdapter(test_dialog),
-            LowConfidenceAdapter(0.2, ["Sorry i dont understand.", "Could you repeat please?"]),
-            BinaryConvertRegexLogicAdapter()
-        ]
-    )
+    bot.add_logic_adapters([
+        CorpusLogicAdapter(test_dialog),
+        LowConfidenceAdapter(0.2, ["Sorry i dont understand.", "Could you repeat please?"]),
+        BinaryConvertRegexLogicAdapter()
+    ])
+
+    bot.add_output_adapters([
+        ConsoleStreamAdapter(),
+        ExampleApiStreamAdapter(),
+        CoquiTTSStreamAdapter(),
+        # TtsStreamAdapter(),
+    ])
+
     bot.ask("Where are you from?")
     bot.ask("weather")
     bot.ask("quick brown")

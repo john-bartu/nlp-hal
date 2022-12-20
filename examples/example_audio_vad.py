@@ -6,6 +6,7 @@ import wave
 
 import numpy as np
 import pyaudio
+import requests
 import stt
 import webrtcvad
 from scipy import signal
@@ -202,7 +203,28 @@ test_dialog = [
     ["How to learn english?", "Its simple, just talk with me."]
 ]
 
+
+# models install from
+
+
+def download_dependency(url, filename):
+    logging.info(f"Downloading: {url} to {filename}")
+    response = requests.get(url)
+    open(filename, "wb").write(response.content)
+
+
 if __name__ == '__main__':
+    if not os.path.isdir('stt_temp'):
+        os.mkdir('stt_temp')
+
+    if not os.path.isfile('stt_temp/model.tflite'):
+        download_dependency('https://coqui.gateway.scarf.sh/english/coqui/v1.0.0-huge-vocab/model.tflite',
+                            'stt_temp/model.tflite')
+
+    if not os.path.isfile('stt_temp/scorer.scorer'):
+        download_dependency('https://coqui.gateway.scarf.sh/english/coqui/v1.0.0-huge-vocab/huge-vocabulary.scorer',
+                            'stt_temp/scorer.scorer')
+
     bot.add_logic_adapters(
         [
             CorpusLogicAdapter(test_dialog),
@@ -216,6 +238,6 @@ if __name__ == '__main__':
     )
 
     main(
-        model=f"{os.path.expanduser('~')}\\.local\\share\\coqui\\models\\English STT v1.0.0-large-vocab\\model.tflite",
-        scorer=f"{os.path.expanduser('~')}\\.local\\share\\coqui\\models\\English STT v1.0.0-large-vocab\\large_vocabulary.scorer"
+        model=f"stt_temp/model.tflite",
+        scorer=f"stt_temp/scorer.scorer"
     )

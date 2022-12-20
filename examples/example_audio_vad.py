@@ -173,6 +173,7 @@ def main(model, scorer=None, vad_aggr=3, vad_dev=None, vad_rate=16000):
         model.enableExternalScorer(scorer)
 
     while True:
+        # TODO: not reinit VAD every utterance
         vad_audio = VADAudio(
             aggressiveness=vad_aggr,
             device=vad_dev,
@@ -189,7 +190,7 @@ def main(model, scorer=None, vad_aggr=3, vad_dev=None, vad_rate=16000):
                 logging.debug("streaming frame")
                 stream_context.feedAudioContent(np.frombuffer(frame, np.int16))
             else:
-                logging.debug("end utterence")
+                logging.debug("end utterance")
                 text = stream_context.finishStream()
                 if text != "":
                     bot.ask(text)
@@ -204,9 +205,6 @@ test_dialog = [
 ]
 
 
-# models install from
-
-
 def download_dependency(url, filename):
     logging.info(f"Downloading: {url} to {filename}")
     response = requests.get(url)
@@ -214,6 +212,7 @@ def download_dependency(url, filename):
 
 
 if __name__ == '__main__':
+    # TODO: Beautify this?
     if not os.path.isdir('stt_temp'):
         os.mkdir('stt_temp')
 

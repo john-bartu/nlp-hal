@@ -2,7 +2,7 @@ import random
 import re
 from abc import ABCMeta
 from operator import itemgetter
-from typing import Union
+from typing import Union, List
 
 import nltk
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -16,7 +16,7 @@ stop_words = nltk.corpus.stopwords.words('english')
 
 class LowConfidenceAdapter(LogicAdapter, metaclass=ABCMeta):
 
-    def __init__(self, confidence: float, response: Union[str, list[str]]) -> None:
+    def __init__(self, confidence: float, response: Union[str, List[str]]) -> None:
         super().__init__()
         self.confidence = confidence
 
@@ -34,7 +34,7 @@ class LowConfidenceAdapter(LogicAdapter, metaclass=ABCMeta):
 
 class CorpusLogicAdapter(LogicAdapter):
 
-    def __init__(self, question_answer: list[list[str]]) -> None:
+    def __init__(self, question_answer: List[List[str]]) -> None:
         super().__init__()
         self.question_answer = question_answer
 

@@ -64,14 +64,13 @@ class Audio(object):
         self.stream = self.pa.open(**kwargs)
         self.stream.start_stream()
 
-    def resample(self, data, input_rate):
+    def resample(self, data):
         """
         Microphone may not support our native processing sampling rate, so
         resample from input_rate to RATE_PROCESS here for webrtcvad and
         stt
         Args:
             data (binary): Input audio stream
-            input_rate (int): Input audio rate to resample from
         """
         data16 = np.fromstring(string=data, dtype=np.int16)
         resample_size = int(len(data16) / self.input_rate * self.RATE_PROCESS)
@@ -81,8 +80,7 @@ class Audio(object):
 
     def read_resampled(self):
         """Return a block of audio data resampled to 16000hz, blocking if necessary."""
-        return self.resample(data=self.buffer_queue.get(),
-                             input_rate=self.input_rate)
+        return self.resample(data=self.buffer_queue.get())
 
     def read(self):
         """Return a block of audio data, blocking if necessary."""

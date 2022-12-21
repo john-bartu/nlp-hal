@@ -9,9 +9,6 @@ from core.logic import CoreBot, Stream, Response, LogicAdapter
 
 logging.basicConfig(level=logging.INFO)
 
-test_dialog = [
-]
-
 
 class ConsoleStreamAdapter(Stream):
 

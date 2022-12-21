@@ -78,17 +78,17 @@ class CoreBot:
 
     def __init__(self) -> None:
         super().__init__()
-        self.logic_adapters: list[LogicAdapter] = []
-        self.output_adapters: list[Stream] = []
-        self.pre_processors: list[PreProcessorAdapter] = [EntityExtractorAdapter()]
+        self.logic_adapters: List[LogicAdapter] = []
+        self.output_adapters: List[Stream] = []
+        self.pre_processors: List[PreProcessorAdapter] = [EntityExtractorAdapter()]
 
     def add_logic_adapter(self, logic_adapter: LogicAdapter):
         self.logic_adapters.append(logic_adapter)
 
-    def add_logic_adapters(self, logic_adapters: list[LogicAdapter]):
+    def add_logic_adapters(self, logic_adapters: List[LogicAdapter]):
         self.logic_adapters.extend(logic_adapters)
 
-    def add_output_adapters(self, stream_adapters: list[Stream]):
+    def add_output_adapters(self, stream_adapters: List[Stream]):
         self.output_adapters.extend(stream_adapters)
 
     def ask(self, input_text: str):

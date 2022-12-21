@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+import sys
 import logging
 
 from audio_porcessing.text_to_speech import CoquiTTSStreamAdapter
 from core.adapters import CorpusLogicAdapter, LowConfidenceAdapter, BinaryConvertRegexLogicAdapter
 from core.logic import CoreBot, Stream, Response
 
-logging.basicConfig(level=logging.INFO)
+
+logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)], format='%(levelname)5s - %(message)s')
 
 test_dialog = [
     [

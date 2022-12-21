@@ -3,10 +3,8 @@ from __future__ import annotations
 import logging
 import re
 
-from audio_porcessing.text_to_speech import CoquiTTSStreamAdapter
 from core.adapters import CorpusLogicAdapter, LowConfidenceAdapter
 from core.logic import Response, CoreBot, RegexLogicAdapter
-from examples.example_simple_dialogs import ConsoleStreamAdapter
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -51,7 +49,7 @@ class ErrorCodeLogicAdapter(RegexLogicAdapter):
     def __init__(self):
         super().__init__()
 
-    def process(self, input_text: str) -> Response:
+    def process(self, input_text: str, session: dict) -> Response:
         error_code = self.pattern.findall(input_text)[0].upper()
         if error_code in self.code_message:
             return Response(self.code_message[error_code], 1)

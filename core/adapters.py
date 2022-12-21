@@ -25,10 +25,10 @@ class LowConfidenceAdapter(LogicAdapter, metaclass=ABCMeta):
         else:
             self.responses = [response]
 
-    def can_process(self, input_text) -> bool:
+    def can_process(self, input_text, session: dict) -> bool:
         return True
 
-    def process(self, input_text: str) -> Response:
+    def process(self, input_text: str, session: dict) -> Response:
         return Response(random.choice(self.responses), self.confidence)
 
 
@@ -38,17 +38,16 @@ class CorpusLogicAdapter(LogicAdapter):
         super().__init__()
         self.question_answer = question_answer
 
-    def can_process(self, input_text) -> bool:
+    def can_process(self, input_text, session: dict) -> bool:
         return True
 
-    def process(self, input_text: str) -> Response:
+    def process(self, input_text: str, session: dict) -> Response:
         corpus = list(map(itemgetter(0), self.question_answer))
         answer = list(map(itemgetter(1), self.question_answer))
         corpus.append(input_text)
         tfidf_vec = TfidfVectorizer(stop_words=stop_words)
         tfidf = tfidf_vec.fit_transform(corpus)
         similarity = cosine_similarity(tfidf[-1], tfidf)
-        # print(similarity)
         idx = similarity.argsort()[0][-2]
         return Response(answer[idx], similarity[0][idx])
 
@@ -60,7 +59,7 @@ class BinaryConvertRegexLogicAdapter(RegexLogicAdapter):
     def __init__(self):
         super().__init__()
 
-    def process(self, input_text: str) -> Response:
+    def process(self, input_text: str, session: dict) -> Response:
         binary = self.pattern.findall(input_text)[0]
         text = f'Decimal value of {binary} is {int(binary, 2)}'
         conf = self.calculate_confidence(binary, input_text)

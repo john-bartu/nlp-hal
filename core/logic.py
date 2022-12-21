@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import re
 from abc import ABC, abstractmethod, ABCMeta
+import sys
 from typing import List
 
 import nltk.tokenize
@@ -10,6 +11,14 @@ import numpy as np
 from fuzzysearch import find_near_matches
 
 module_logger = logging.getLogger(__name__)
+
+handler = logging.StreamHandler(sys.stdout)
+handler.setLevel(logging.DEBUG)
+log_format = '%(levelname)5s - %(message)s'
+formatter = logging.Formatter(log_format)
+handler.setFormatter(formatter)
+module_logger.addHandler(handler)
+module_logger.propagate = False
 
 
 class LogicAdapter(ABC):

@@ -13,12 +13,12 @@ module_logger = logging.getLogger(__name__)
 class LogicAdapter(ABC):
 
     @abstractmethod
-    def process(self, input_text: str) -> Response:
-        pass
-
-    @abstractmethod
     def can_process(self, input_text) -> bool:
         return True
+
+    @abstractmethod
+    def process(self, input_text: str) -> Response:
+        pass
 
 
 class Stream(ABC):

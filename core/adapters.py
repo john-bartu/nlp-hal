@@ -45,9 +45,7 @@ class CorpusLogicAdapter(LogicAdapter):
         corpus = list(map(itemgetter(0), self.question_answer))
         answer = list(map(itemgetter(1), self.question_answer))
         corpus.append(input_text)
-        # tfidf_vec = TfidfVectorizer(stop_words=stop_words)
-        # warning: 'where are you from' will not work, all words are in stopwords
-        tfidf_vec = TfidfVectorizer()
+        tfidf_vec = TfidfVectorizer(stop_words=stop_words)
         tfidf = tfidf_vec.fit_transform(corpus)
         similarity = cosine_similarity(tfidf[-1], tfidf)
         # print(similarity)

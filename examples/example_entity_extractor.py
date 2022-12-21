@@ -5,7 +5,7 @@ import logging
 import nltk.tokenize
 
 from core.adapters import LowConfidenceAdapter
-from core.logic import CoreBot, Stream, Response, LogicAdapter
+from core.logic import CoreBot, Stream, Response, LogicAdapter, EntityExtractorAdapter
 
 logging.basicConfig(level=logging.INFO)
 
@@ -52,7 +52,10 @@ if __name__ == '__main__':
         LowConfidenceAdapter(0.2, ["Sorry i dont understand.", "Could you repeat please?"]),
     ])
 
-    bot.add_output_adapters([
+    bot.add_pre_processors([
+        EntityExtractorAdapter({'color': ['red', 'white', 'orange', 'blue'],
+                                'animal': ['cat', 'dog', 'tiger', 'elephant'],
+                                'city': ['cracow', 'warsaw', 'oslo', 'new york']})
     ])
 
     bot.ask("I really love cat")

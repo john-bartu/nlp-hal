@@ -90,7 +90,7 @@ class CoreBot:
 
     def ask(self, input_text: str):
         module_logger.info('\t\tBEGIN OF UTTERANCE')
-        module_logger.debug(f"Asked: {input_text}")
+        module_logger.info(f"Asked: {input_text}")
         available_responses = []
         for adapter in self.logic_adapters:
             if adapter.can_process(input_text):

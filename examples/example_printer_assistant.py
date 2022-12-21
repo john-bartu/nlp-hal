@@ -6,6 +6,7 @@ import re
 from audio_porcessing.text_to_speech import CoquiTTSStreamAdapter
 from core.adapters import CorpusLogicAdapter, LowConfidenceAdapter
 from core.logic import Response, CoreBot, RegexLogicAdapter
+from examples.example_simple_dialogs import ConsoleStreamAdapter
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -69,13 +70,14 @@ if __name__ == '__main__':
     )
     bot.add_output_adapters(
         [
-            CoquiTTSStreamAdapter(),
+            # CoquiTTSStreamAdapter(),
+            # ConsoleStreamAdapter()
         ]
     )
     bot.ask("i have black lines on page")
     bot.ask("i have white lines down the page")
     bot.ask("Print's curled paper")
-    bot.ask("who you are?")
     bot.ask("I have error code #8f")
     bot.ask("I have #48 error code what can I do")
     bot.ask("error #10")
+    bot.ask("who you are?")
